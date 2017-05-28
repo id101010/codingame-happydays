@@ -16,23 +16,48 @@
 #include<unistd.h>
 #include<time.h>
 
-int main(int argc, char **argv)
-{
+/* prototypes */
+char *strptime(const char *s, const char *format, struct tm *tm);
+
+/* data types */
+typedef struct input_s {
     int leapYear;
     int sourceDayOfMonth;
     int targetDayOfMonth;
     char sourceDayOfWeek[9];
     char sourceMonth[4];
     char targetMonth[4];
+} input_t;
+
+/* debug function for the input string */
+void debug_print(input_t *i)
+{
+    fprintf(stderr, "Leap: %d\n", i->leapYear);
+    fprintf(stderr, "Source:\n DayOfWeek: %s\n Month: %s\n DayOfMonth: %d\n", i->sourceDayOfWeek, i->sourceMonth, i->sourceDayOfMonth);
+    fprintf(stderr, "Target:\n Month: %s\n DayOfMonth: %d\n", i->targetMonth, i->targetDayOfMonth );
+}
+
+/* main function */
+int main(int argc, char **argv)
+{
+    input_t in;
+    struct tm source;
+    struct tm target;
 
     /* Get values */
-    scanf("%d", &leapYear);
-    scanf("%s%s%d", sourceDayOfWeek, sourceMonth, &sourceDayOfMonth);
-    scanf("%s%d", targetMonth, &targetDayOfMonth);
+    scanf("%d", &(in.leapYear));
+    scanf("%s%s%d", in.sourceDayOfWeek, in.sourceMonth, &(in.sourceDayOfMonth));
+    scanf("%s%d", in.targetMonth, &(in.targetDayOfMonth));
 
-    // To debug: fprintf(stderr, "Debug messages...\n");
+    /* debug print */
+    debug_print(&in);
 
-    printf("day of week\n");
+    /* Convert input into a time struct */
+    strptime(in.sourceDayOfWeek,"%a", &source);
+    strptime(&in.sourceDayOfMonth,"%d", &source);
+    strptime(in.sourceMonth, "%b", &source);
+    mktime(&source);
+    asctime(&source);
 
     exit(EXIT_SUCCESS);
 }
